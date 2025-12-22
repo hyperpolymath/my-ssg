@@ -1,0 +1,353 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
+= NoteG Project Handover Specification
+:toc: left
+:toclevels: 3
+:icons: font
+
+== Executive Summary
+
+This document provides a comprehensive handover specification for the NoteG
+Static Site Generator (my-ssg) project, part of the hyperpolymath ecosystem.
+
+=== Project Status
+
+[cols="1,1"]
+|===
+|Component |Status
+
+|RSR Compliance |100% Complete
+|Security Policy |100% Complete
+|Core Engine |Implemented
+|Language Tooling |Implemented
+|SSG Adapters |28 Adapters
+|Testing |Framework Ready
+|Documentation |In Progress
+|===
+
+=== Current Version
+
+* Version: 0.1.0
+* Phase: v0.1 - Initial Setup
+* Overall Completion: 75%
+
+== Architecture Overview
+
+=== System Components
+
+[plantuml]
+----
+@startuml
+package "NoteG SSG" {
+  [Ada/SPARK Engine] as engine
+  [ReScript SSG] as ssg
+  [NoteG Language] as lang
+  [MCP Adapters] as adapters
+  [Accessibility] as a11y
+}
+
+[Content] --> ssg
+ssg --> engine
+ssg --> lang
+ssg --> adapters
+ssg --> a11y
+adapters --> [28 SSGs]
+@enduml
+----
+
+=== Technology Stack
+
+[cols="1,1,2"]
+|===
+|Layer |Technology |Purpose
+
+|Core Engine
+|Ada/SPARK
+|Formally verified generation primitives
+
+|SSG Logic
+|ReScript
+|Type-safe site generation
+
+|Language
+|ReScript
+|Lexer, parser, compiler, interpreter
+
+|Adapters
+|JavaScript/Deno
+|MCP protocol wrappers
+
+|Testing
+|Deno Test
+|Unit, integration, E2E tests
+
+|CI/CD
+|GitHub Actions
+|CodeQL, automated testing
+|===
+
+== Repository Structure
+
+----
+my-ssg/
+├── engine/              # Ada/SPARK core engine
+│   └── src/
+│       ├── noteg_engine.ads
+│       └── noteg_engine.adb
+├── ssg/                 # ReScript SSG components
+│   └── src/
+│       ├── types.res
+│       ├── build.res
+│       └── env.res
+├── noteg-lang/          # Language tooling
+│   ├── src/
+│   │   ├── lexer.res
+│   │   ├── parser.res
+│   │   ├── interpreter.res
+│   │   └── compiler.res
+│   └── src/lsp/
+│       └── server.ts
+├── noteg-mcp/           # MCP server
+├── noteg-rescript/      # ReScript adapter
+├── adapters/            # 28 SSG adapters
+├── a11y/                # Accessibility schemas
+├── tests/               # Test suite
+│   ├── unit/
+│   └── e2e/
+├── docs/                # Documentation
+├── content/             # Example content
+├── templates/           # Example templates
+├── examples/            # Usage examples
+├── .github/             # CI/CD configuration
+├── Justfile             # Task runner
+├── Mustfile             # Configuration templates
+├── Containerfile        # Container image
+├── .tool-versions       # Runtime versions
+├── META.scm             # Architecture metadata
+├── ECOSYSTEM.scm        # Ecosystem positioning
+├── STATE.scm            # Project state
+├── PLAYBOOK.scm         # Operational playbook
+├── AGENTIC.scm          # Agentic AI configuration
+└── NEUROSYM.scm         # Neurosymbolic config
+----
+
+== Key Components
+
+=== 1. Ada/SPARK Engine
+
+The core engine provides formally verified primitives for:
+
+* Operation card execution
+* Variable store management
+* Template substitution
+* Content transformation
+
+==== Key Files
+
+* `engine/src/noteg_engine.ads` - Specification
+* `engine/src/noteg_engine.adb` - Implementation
+
+==== Verification Status
+
+* SPARK mode enabled
+* Contracts defined for all public operations
+* Bernoulli verification tests available
+
+=== 2. NoteG Language
+
+Custom language for advanced templating:
+
+==== Features
+
+* Lexer with full token support
+* Recursive descent parser
+* Tree-walking interpreter
+* JavaScript compiler
+
+==== Language Constructs
+
+[source,noteg]
+----
+// Variables
+let x = 10
+const PI = 3.14159
+
+// Functions
+fn add(a, b) { a + b }
+
+// Pipes
+data |> transform |> output
+
+// Templates
+{{ site.title }}
+----
+
+=== 3. SSG Adapters
+
+28 adapters wrapping existing static site generators:
+
+* **Rust**: Zola, Cobalt, mdBook
+* **Haskell**: Hakyll, Ema
+* **Elixir**: Serum, Tableau, NimblePublisher
+* **Julia**: Franklin, Documenter, StaticWebPages
+* **Others**: OCaml, Racket, Clojure, F#, etc.
+
+=== 4. Accessibility
+
+First-class accessibility support:
+
+* BSL (British Sign Language)
+* GSL (German Sign Language)
+* ASL (American Sign Language)
+* Makaton symbols
+* WCAG compliance tracking
+
+== Development Workflow
+
+=== Prerequisites
+
+* Deno 2.1.4+
+* Just 1.36.0+
+* Ada/SPARK toolchain (optional)
+* Node.js 22+ (for ReScript)
+
+=== Getting Started
+
+[source,bash]
+----
+# Install dependencies
+asdf install
+
+# Build
+just build
+
+# Test
+just test-all
+
+# Run development server
+just serve
+----
+
+=== CI/CD Pipeline
+
+GitHub Actions workflows:
+
+* `codeql.yml` - Security scanning
+* `ci.yml` - Build and test (to be implemented)
+
+== Testing Strategy
+
+=== Test Types
+
+1. **Unit Tests** - Component-level testing
+2. **Integration Tests** - Cross-component testing
+3. **E2E Tests** - Full workflow testing
+4. **Bernoulli Tests** - Probabilistic verification
+
+=== Running Tests
+
+[source,bash]
+----
+just test-unit      # Unit tests
+just test           # Unit + integration
+just test-e2e       # E2E tests
+just test-bernoulli # Verification tests
+just test-all       # All tests
+----
+
+=== Coverage Target
+
+Minimum 70% code coverage as per RSR requirements.
+
+== Security Considerations
+
+=== Security Policy
+
+See `SECURITY.md` for vulnerability reporting.
+
+=== Security Practices
+
+* SHA-pinned GitHub Actions
+* CodeQL static analysis
+* No shell execution with `shell: true`
+* Array-based command arguments
+* Environment variable secrets only
+
+== Deployment
+
+=== Container
+
+[source,bash]
+----
+# Build container
+just container-build
+
+# Run container
+just container-run
+
+# Push to registry
+just container-push ghcr.io/hyperpolymath
+----
+
+=== Manual Deployment
+
+1. Build site: `just generate`
+2. Deploy `_site/` to hosting provider
+
+== Known Issues
+
+=== Current Blockers
+
+None identified.
+
+=== Technical Debt
+
+1. README.adoc needs content
+2. Full test coverage not yet achieved
+3. MCP server integration incomplete
+4. ReScript adapter not implemented
+
+== Future Roadmap
+
+See `STATE.scm` for detailed roadmap:
+
+1. **v0.2** - Testing & Validation
+2. **v0.3** - Documentation & Examples
+3. **v0.4** - MCP Integration
+4. **v1.0** - Stable Release
+
+== Contact
+
+* Repository: https://github.com/hyperpolymath/my-ssg
+* Issues: https://github.com/hyperpolymath/my-ssg/issues
+* Discussions: https://github.com/hyperpolymath/my-ssg/discussions
+
+== Appendix
+
+=== Glossary
+
+[cols="1,3"]
+|===
+|Term |Definition
+
+|MCP
+|Model Context Protocol - standard for AI tool integration
+
+|RSR
+|Rhodium Standard Repository - quality guidelines
+
+|SSG
+|Static Site Generator
+
+|NoteG
+|The custom language and project name
+
+|Operation Card
+|A unit of work in mill-based synthesis
+|===
+
+=== References
+
+* https://modelcontextprotocol.io[MCP Specification]
+* https://github.com/hyperpolymath/rhodium-standard-repositories[RSR Guidelines]
+* https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp Hub]

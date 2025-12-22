@@ -1,0 +1,351 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
+= NoteG User Guide
+:toc: left
+:toclevels: 3
+:icons: font
+:source-highlighter: rouge
+
+== Introduction
+
+NoteG is a static site generator with MCP (Model Context Protocol) integration,
+supporting 28+ static site generators and accessibility-first design.
+
+=== Features
+
+* **28+ SSG Adapters** - Wrap existing static site generators via MCP
+* **Ada/SPARK Engine** - Formally verified generation primitives
+* **Mill-Based Synthesis** - Operation card templating
+* **Accessibility First** - BSL, GSL, ASL, Makaton support
+* **NoteG Language** - Custom templating and configuration language
+
+== Quick Start
+
+=== Installation
+
+[source,bash]
+----
+# Clone the repository
+git clone https://github.com/hyperpolymath/my-ssg.git
+cd my-ssg
+
+# Install dependencies (using asdf)
+asdf install
+
+# Or manually install Deno
+curl -fsSL https://deno.land/install.sh | sh
+----
+
+=== Creating Your First Site
+
+[source,bash]
+----
+# Initialize a new site
+just init my-site
+
+# Navigate to the site
+cd my-site
+
+# Start the development server
+just serve
+----
+
+=== Project Structure
+
+[source]
+----
+my-site/
+├── content/           # Markdown and NoteG content
+│   ├── index.md
+│   └── posts/
+├── templates/         # HTML templates
+│   ├── default.html
+│   └── post.html
+├── static/            # Static assets
+├── _site/             # Generated output
+└── noteg.config.json  # Site configuration
+----
+
+== Configuration
+
+=== Site Configuration
+
+Create a `noteg.config.json` file:
+
+[source,json]
+----
+{
+  "name": "my-site",
+  "version": "1.0.0",
+  "site": {
+    "title": "My Site",
+    "description": "A site built with NoteG",
+    "url": "https://example.com",
+    "language": "en-GB"
+  },
+  "build": {
+    "contentDir": "content",
+    "templatesDir": "templates",
+    "outputDir": "_site",
+    "clean": true
+  },
+  "features": {
+    "accessibility": true,
+    "bsl": false,
+    "gsl": false,
+    "asl": false,
+    "makaton": false
+  }
+}
+----
+
+=== Environment Variables
+
+[cols="1,1,2"]
+|===
+|Variable |Default |Description
+
+|`NODE_ENV`
+|`development`
+|Environment mode: development, production, test
+
+|`LOG_LEVEL`
+|`info`
+|Logging level: debug, info, warn, error
+
+|`SITE_URL`
+|`http://localhost:8080`
+|Base URL for the site
+
+|`MCP_DEBUG`
+|`false`
+|Enable MCP debug logging
+|===
+
+== Content
+
+=== Markdown Files
+
+Content files use YAML frontmatter:
+
+[source,markdown]
+----
+---
+title: My Post
+date: 2025-01-15
+draft: false
+tags: [blog, tutorial]
+layout: post
+---
+
+# My Post
+
+Content goes here...
+----
+
+=== NoteG Language
+
+NoteG provides a custom language for advanced templating:
+
+[source,noteg]
+----
+// Variables
+let title = "Hello World"
+const version = "1.0.0"
+
+// Functions
+fn greet(name) {
+  "Hello, " + name + "!"
+}
+
+// Pipe operator
+"world" |> greet |> print
+
+// Template expressions
+let message = {{ site.title }} - {{ page.title }}
+----
+
+== Templates
+
+=== Template Syntax
+
+Templates use mustache-style variable substitution:
+
+[source,html]
+----
+<!DOCTYPE html>
+<html lang="{{ site.language }}">
+<head>
+  <title>{{ page.title }} - {{ site.title }}</title>
+</head>
+<body>
+  <main>
+    {{ page.content }}
+  </main>
+</body>
+</html>
+----
+
+=== Available Variables
+
+[cols="1,2"]
+|===
+|Variable |Description
+
+|`site.title`
+|Site title from configuration
+
+|`site.description`
+|Site description
+
+|`site.url`
+|Base URL
+
+|`page.title`
+|Current page title
+
+|`page.content`
+|Rendered page content
+
+|`page.date`
+|Publication date
+
+|`page.tags`
+|Array of tags
+|===
+
+== Accessibility
+
+=== Sign Language Support
+
+NoteG supports BSL, GSL, ASL, and Makaton metadata:
+
+[source,yaml]
+----
+# In frontmatter
+a11y:
+  bsl:
+    videoUrl: /videos/page-bsl.mp4
+    transcriptUrl: /transcripts/page.txt
+  wcagLevel: AA
+----
+
+=== Schema Validation
+
+Accessibility metadata is validated against the a11y schema:
+
+[source,bash]
+----
+just a11y-validate
+----
+
+== Commands Reference
+
+=== Build Commands
+
+[source,bash]
+----
+just build          # Build all components
+just build-engine   # Build Ada/SPARK engine
+just build-ssg      # Build SSG components
+just clean          # Clean build artifacts
+----
+
+=== Test Commands
+
+[source,bash]
+----
+just test           # Run unit and integration tests
+just test-all       # Run all tests including E2E
+just test-e2e       # Run end-to-end tests
+just test-bernoulli # Run probabilistic verification
+just coverage       # Generate coverage report
+----
+
+=== Development Commands
+
+[source,bash]
+----
+just serve          # Start development server
+just watch          # Watch for changes
+just fmt            # Format code
+just lint           # Lint code
+----
+
+=== Language Server
+
+[source,bash]
+----
+just lsp            # Start NoteG Language Server
+just compile file   # Compile a .noteg file
+just parse file     # Parse and show AST
+----
+
+== Adapters
+
+NoteG includes adapters for 28 static site generators:
+
+[cols="1,1,2"]
+|===
+|Adapter |Language |Description
+
+|zola
+|Rust
+|Fast static site generator
+
+|hakyll
+|Haskell
+|Pandoc-based generator
+
+|mdbook
+|Rust
+|Documentation generator
+
+|serum
+|Elixir
+|Simple site generator
+
+|franklin
+|Julia
+|Scientific site generator
+
+|cobalt
+|Rust
+|Simple blog generator
+|===
+
+See the full list in the `adapters/` directory.
+
+== Troubleshooting
+
+=== Common Issues
+
+==== Build Fails
+
+Check that all dependencies are installed:
+
+[source,bash]
+----
+asdf install
+----
+
+==== Template Not Found
+
+Ensure template exists in the templates directory and matches the layout specified in frontmatter.
+
+==== Port Already in Use
+
+Specify a different port:
+
+[source,bash]
+----
+just serve 3000
+----
+
+== Contributing
+
+See link:../CONTRIBUTING.md[CONTRIBUTING.md] for guidelines.
+
+== License
+
+AGPL-3.0-or-later
