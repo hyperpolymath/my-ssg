@@ -1,0 +1,248 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
+# Mustfile - Configuration templates and mustache-style substitutions
+# See: https://github.com/hyperpolymath/Mustfile
+
+# ============================================================================
+# PROJECT METADATA
+# ============================================================================
+
+[project]
+name = "my-ssg"
+version = "0.1.0"
+description = "NoteG Static Site Generator with MCP integration"
+license = "AGPL-3.0-or-later"
+authors = ["Jonathan D.A. Jewell"]
+repository = "https://github.com/hyperpolymath/my-ssg"
+
+# ============================================================================
+# TEMPLATE VARIABLES
+# ============================================================================
+
+[vars]
+# Project identifiers
+PROJECT_NAME = "my-ssg"
+FULL_NAME = "NoteG Static Site Generator"
+ORG = "hyperpolymath"
+
+# Version info
+VERSION = "0.1.0"
+SEMVER_MAJOR = "0"
+SEMVER_MINOR = "1"
+SEMVER_PATCH = "0"
+
+# Paths
+ENGINE_PATH = "engine/src"
+SSG_PATH = "ssg/src"
+LANG_PATH = "noteg-lang/src"
+MCP_PATH = "noteg-mcp/src"
+DOCS_PATH = "docs"
+TESTS_PATH = "tests"
+
+# Runtime versions (sync with .tool-versions)
+DENO_VERSION = "2.1.4"
+ADA_VERSION = "2024"
+RESCRIPT_VERSION = "11.1.0"
+
+# ============================================================================
+# ENVIRONMENT TEMPLATES
+# ============================================================================
+
+[env.development]
+NODE_ENV = "development"
+LOG_LEVEL = "debug"
+MCP_DEBUG = "true"
+SITE_URL = "http://localhost:8080"
+
+[env.production]
+NODE_ENV = "production"
+LOG_LEVEL = "info"
+MCP_DEBUG = "false"
+SITE_URL = "https://example.com"
+
+[env.test]
+NODE_ENV = "test"
+LOG_LEVEL = "warn"
+MCP_DEBUG = "false"
+SITE_URL = "http://localhost:3000"
+
+# ============================================================================
+# CONFIG FILE TEMPLATES
+# ============================================================================
+
+[templates.site-config]
+output = "noteg.config.json"
+template = """
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "{{VERSION}}",
+  "site": {
+    "title": "My Site",
+    "description": "A site built with NoteG",
+    "url": "{{SITE_URL}}",
+    "language": "en-GB"
+  },
+  "build": {
+    "contentDir": "content",
+    "templatesDir": "templates",
+    "outputDir": "_site",
+    "clean": true
+  },
+  "features": {
+    "accessibility": true,
+    "bsl": false,
+    "gsl": false,
+    "asl": false,
+    "makaton": false
+  }
+}
+"""
+
+[templates.deno-config]
+output = "deno.json"
+template = """
+{
+  "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
+  "name": "@{{ORG}}/{{PROJECT_NAME}}",
+  "version": "{{VERSION}}",
+  "tasks": {
+    "build": "just build",
+    "test": "just test",
+    "dev": "just serve",
+    "lint": "deno lint",
+    "fmt": "deno fmt"
+  },
+  "imports": {
+    "@std/": "jsr:@std/",
+    "@mcp/": "./noteg-mcp/src/"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "singleQuote": false
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  }
+}
+"""
+
+[templates.ada-project]
+output = "engine/noteg_engine.gpr"
+template = """
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+project Noteg_Engine is
+   for Source_Dirs use ("src/**");
+   for Object_Dir use "obj";
+   for Library_Dir use "lib";
+   for Library_Name use "noteg_engine";
+   for Library_Kind use "static";
+
+   type Build_Mode_Type is ("debug", "release");
+   Build_Mode : Build_Mode_Type := external ("BUILD_MODE", "debug");
+
+   package Compiler is
+      case Build_Mode is
+         when "debug" =>
+            for Default_Switches ("Ada") use
+              ("-g", "-gnatwa", "-gnatVa", "-gnata", "-gnat2022");
+         when "release" =>
+            for Default_Switches ("Ada") use
+              ("-O2", "-gnatn", "-gnat2022");
+      end case;
+   end Compiler;
+end Noteg_Engine;
+"""
+
+# ============================================================================
+# HOOK TEMPLATES
+# ============================================================================
+
+[hooks.pre-commit]
+template = """
+#!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-or-later
+set -e
+just fmt
+just lint
+just test-unit
+"""
+
+[hooks.pre-push]
+template = """
+#!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-or-later
+set -e
+just test-all
+just audit
+"""
+
+# ============================================================================
+# CI/CD TEMPLATES
+# ============================================================================
+
+[templates.github-workflow]
+output = ".github/workflows/ci.yml"
+template = """
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions: read-all
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: {{DENO_VERSION}}
+      - run: just test-all
+      - run: just lint
+"""
+
+# ============================================================================
+# NICKEL INTEGRATION
+# ============================================================================
+
+[nickel]
+# Nickel configuration language integration
+schema = "nickel/schema.ncl"
+config = "nickel/config.ncl"
+
+[nickel.formulae]
+# Build formulae
+build-all = "nickel/formulae/build.ncl"
+test-all = "nickel/formulae/test.ncl"
+deploy = "nickel/formulae/deploy.ncl"
+
+# Configuration formulae
+site-config = "nickel/formulae/site.ncl"
+a11y-config = "nickel/formulae/accessibility.ncl"
+
+# ============================================================================
+# COOKBOOK GENERATION
+# ============================================================================
+
+[cookbook]
+output = "cookbook.adoc"
+sections = [
+  "cli",      # Command-line interface recipes
+  "nickel",   # Nickel configuration recipes
+  "just",     # Justfile task recipes
+  "hooks",    # Git hooks and automation
+  "cicd"      # CI/CD pipeline recipes
+]
