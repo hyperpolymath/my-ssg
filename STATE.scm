@@ -1,93 +1,74 @@
-;;; STATE.scm — my-ssg (SSG Adapter Collection)
+;;; STATE.scm — my-ssg
 ;; SPDX-License-Identifier: AGPL-3.0-or-later
 ;; SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
 
 (define metadata
-  '((version . "0.1.0") (updated . "2025-12-22") (project . "my-ssg")))
+  '((version . "0.1.0") (updated . "2025-12-17") (project . "my-ssg")))
 
 (define current-position
-  '((phase . "v0.1 - Core Adapters Complete")
-    (overall-completion . 85)
+  '((phase . "v0.1 - Initial Setup")
+    (overall-completion . 35)
     (components
       ((rsr-compliance ((status . "complete") (completion . 100)))
        (security-policy ((status . "complete") (completion . 100)))
-       (adapters ((status . "complete") (completion . 100) (count . 28)))
-       (build-system ((status . "complete") (completion . 100)))
-       (testing ((status . "in-progress") (completion . 60)))
-       (documentation ((status . "in-progress") (completion . 70)))
-       (ci-cd ((status . "complete") (completion . 100)))))))
+       (adapters ((status . "in-progress") (completion . 100) (note . "27 SSG adapters implemented")))
+       (testing ((status . "pending") (completion . 0)))
+       (documentation ((status . "pending") (completion . 10)))))))
 
 (define blockers-and-issues '((critical ()) (high-priority ())))
 
 (define roadmap
-  '((v0.1 . "Core Adapters"
-      ((status . "complete")
-       (tasks
+  '((v0.1 . "Initial Setup - CURRENT"
+      ((tasks
         ("RSR compliance" . complete)
         ("Security policy" . complete)
         ("SCM files (META, ECOSYSTEM, STATE)" . complete)
-        ("28 SSG adapters" . complete)
-        ("Justfile build system" . complete)
-        ("Containerfile" . complete)
-        ("CI/CD with CodeQL" . complete))))
-
+        ("CI/CD with CodeQL" . complete)
+        ("27 SSG adapters" . complete))))
     (v0.2 . "Testing & Validation"
-      ((status . "next")
-       (tasks
-        ("Complete unit test suite" . in-progress)
-        ("Achieve 70% coverage" . pending)
-        ("Adapter interface validation" . pending)
-        ("Security audit automation" . complete))))
-
-    (v0.3 . "Hub Integration"
-      ((status . "planned")
-       (tasks
-        ("poly-ssg-mcp hub connection" . pending)
-        ("Adapter registration protocol" . pending)
-        ("Version synchronization" . pending))))
-
-    (v0.4 . "Documentation"
-      ((status . "planned")
-       (tasks
-        ("Complete README" . pending)
-        ("Adapter usage examples" . pending)
-        ("Hub integration guide" . pending))))
-
+      ((tasks
+        ("Unit tests for adapters" . pending)
+        ("Integration tests" . pending)
+        ("Deno test runner setup" . pending)
+        ("Coverage reporting (70% target)" . pending))))
+    (v0.3 . "Documentation & Examples"
+      ((tasks
+        ("README.adoc completion" . pending)
+        ("API documentation" . pending)
+        ("Usage examples per SSG" . pending)
+        ("Contributing guide completion" . pending))))
+    (v0.4 . "MCP Integration"
+      ((tasks
+        ("MCP server implementation" . pending)
+        ("Hub integration with poly-ssg-mcp" . pending)
+        ("Protocol compliance testing" . pending))))
     (v1.0 . "Stable Release"
-      ((status . "planned")
-       (tasks
+      ((tasks
         ("All tests passing" . pending)
         ("Documentation complete" . pending)
         ("Security audit" . pending)
-        ("Release automation" . pending)
-        ("Container publishing" . pending))))))
+        ("Release automation" . pending))))))
 
 (define critical-next-actions
   '((immediate
-      (("Complete test suite" . high)
-       ("Verify adapter exports" . high)))
+      (("Add unit tests for adapters" . high)
+       ("Complete README.adoc" . medium)))
     (this-week
-      (("Hub integration planning" . medium)
-       ("Documentation improvements" . medium)))))
+      (("Set up Deno test runner" . high)
+       ("Add integration tests" . medium)))))
 
 (define session-history
   '((snapshots
-      ((date . "2025-12-22")
-       (session . "scm-correction")
-       (notes . "Fixed SCM files to correctly identify as adapter collection, not NoteG language"))
       ((date . "2025-12-17")
        (session . "security-review")
-       (notes . "Fixed SECURITY.md placeholders, verified adapter security"))
+       (notes . "Fixed SECURITY.md placeholders, verified adapter security (no injection vulnerabilities), updated roadmap"))
       ((date . "2025-12-15")
        (session . "initial")
-       (notes . "SCM files added, 28 adapters created")))))
+       (notes . "SCM files added")))))
 
 (define state-summary
   '((project . "my-ssg")
-    (full-name . "SSG Adapter Collection")
-    (completion . 85)
-    (adapters . 28)
+    (completion . 35)
     (blockers . 0)
-    (updated . "2025-12-22")
-    (phase . "v0.1 Complete")
+    (updated . "2025-12-17")
     (next-milestone . "v0.2 - Testing & Validation")))
