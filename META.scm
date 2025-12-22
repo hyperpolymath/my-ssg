@@ -1,10 +1,9 @@
 ;; SPDX-License-Identifier: AGPL-3.0-or-later
 ;; SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
-;;; META.scm — my-ssg (NoteG Static Site Generator)
+;;; META.scm — my-ssg (SSG Adapter Collection)
 
 (define-module (my-ssg meta)
-  #:export (architecture-decisions development-practices design-rationale
-            component-architecture language-specification))
+  #:export (architecture-decisions development-practices design-rationale))
 
 ;; ============================================================================
 ;; Architecture Decision Records
@@ -20,44 +19,36 @@
      (consequences . ("RSR Gold target" "SHA-pinned actions" "SPDX headers" "Multi-platform CI")))
 
     (adr-002
-     (title . "Ada/SPARK Core Engine")
+     (title . "Deno Runtime")
      (status . "accepted")
-     (date . "2025-12-22")
-     (context . "Need formally verified generation primitives")
-     (decision . "Use Ada/SPARK for core engine with SPARK mode enabled")
-     (consequences . ("Formal verification" "Type safety" "Memory safety" "Requires Ada toolchain")))
+     (date . "2025-12-15")
+     (context . "Need lightweight runtime for SSG adapters")
+     (decision . "Use Deno for all adapter implementations")
+     (consequences . ("Type safety" "Security sandbox" "No node_modules" "Built-in testing")))
 
     (adr-003
-     (title . "ReScript for SSG Logic")
+     (title . "Array-Based Command Execution")
      (status . "accepted")
-     (date . "2025-12-22")
-     (context . "Need type-safe JavaScript interop for Deno runtime")
-     (decision . "Use ReScript for SSG components and language tooling")
-     (consequences . ("Type safety" "JavaScript output" "Pattern matching" "Requires ReScript compiler")))
+     (date . "2025-12-15")
+     (context . "Adapters execute external SSG commands")
+     (decision . "Use Deno.Command with array-based args only, never shell: true")
+     (consequences . ("No shell injection" "Command sanitization" "Explicit arguments")))
 
     (adr-004
-     (title . "NoteG Custom Language")
-     (status . "accepted")
-     (date . "2025-12-22")
-     (context . "Need powerful templating with functional programming features")
-     (decision . "Create NoteG language with lexer, parser, interpreter, compiler, and LSP")
-     (consequences . ("Custom syntax" "Editor support via LSP" "Compiles to JavaScript")))
-
-    (adr-005
      (title . "MCP Protocol Integration")
      (status . "accepted")
-     (date . "2025-12-22")
-     (context . "Enable AI agent integration for content generation")
-     (decision . "Implement MCP server with 28 SSG adapters")
+     (date . "2025-12-17")
+     (context . "Enable AI agent integration for SSG operations")
+     (decision . "Each adapter exposes tools via MCP-compatible interface")
      (consequences . ("AI-ready" "Tool ecosystem" "Standardized protocol")))
 
-    (adr-006
-     (title . "Accessibility First Design")
+    (adr-005
+     (title . "Satellite Project Pattern")
      (status . "accepted")
-     (date . "2025-12-22")
-     (context . "Ensure content is accessible to all users")
-     (decision . "Support BSL, GSL, ASL, Makaton with JSON Schema validation")
-     (consequences . ("WCAG compliance" "Sign language support" "Symbol-supported communication")))))
+     (date . "2025-12-17")
+     (context . "Need modular SSG support for poly-ssg-mcp hub")
+     (decision . "Implement as satellite providing 28 adapters to hub")
+     (consequences . ("Loose coupling" "Independent versioning" "Hub integration")))))
 
 ;; ============================================================================
 ;; Development Practices
@@ -65,7 +56,7 @@
 
 (define development-practices
   '((code-style
-     (languages . ("Ada" "ReScript" "TypeScript" "JavaScript"))
+     (languages . ("JavaScript"))
      (formatter . "deno fmt")
      (linter . "deno lint"))
 
@@ -73,19 +64,19 @@
      (sast . "CodeQL")
      (credentials . "env vars only")
      (command-execution . "array-based args only")
-     (audit . "weekly"))
+     (audit . "just audit"))
 
     (testing
      (coverage-minimum . 70)
-     (frameworks . ("Deno.test" "Ada AUnit"))
-     (types . ("unit" "integration" "e2e" "bernoulli")))
+     (frameworks . ("Deno.test"))
+     (types . ("unit" "integration")))
 
     (versioning
      (scheme . "SemVer 2.0.0"))
 
     (documentation
-     (format . "AsciiDoc")
-     (required . ("README" "CONTRIBUTING" "SECURITY" "USER-GUIDE" "HANDOVER")))))
+     (format . "Markdown/AsciiDoc")
+     (required . ("README" "CONTRIBUTING" "SECURITY")))))
 
 ;; ============================================================================
 ;; Design Rationale
@@ -95,77 +86,14 @@
   '((why-rsr
      "RSR ensures consistency, security, and maintainability across the hyperpolymath ecosystem.")
 
-    (why-ada-spark
-     "Ada/SPARK provides formal verification guarantees for safety-critical generation logic.")
+    (why-deno
+     "Deno provides security sandbox, TypeScript support, and built-in testing for adapter development.")
 
-    (why-rescript
-     "ReScript offers type safety with seamless JavaScript interop for the Deno runtime.")
-
-    (why-noteg-language
-     "A custom language enables powerful templating while maintaining type safety and composability.")
+    (why-adapters
+     "Adapters allow uniform MCP interface across diverse SSG implementations in different languages.")
 
     (why-mcp
      "MCP (Model Context Protocol) enables standardized AI agent integration for content generation.")
 
-    (why-accessibility
-     "First-class accessibility support ensures content reaches all users regardless of ability.")))
-
-;; ============================================================================
-;; Component Architecture (44/44 Complete)
-;; ============================================================================
-
-(define component-architecture
-  '((core-engine (count . 4) (status . "complete")
-     (components . ("Ada/SPARK Engine" "Mill-Based Synthesis" "Operation-Card Templating" "Variable Store")))
-
-    (build-system (count . 4) (status . "complete")
-     (components . ("Justfile" "Mustfile" "Containerfile" ".tool-versions")))
-
-    (site-generation (count . 4) (status . "complete")
-     (components . ("Content Processing" "Template Engine" "Output Generation" "Content Schema")))
-
-    (adapters (count . 3) (status . "complete")
-     (components . ("NoteG-MCP Server" "ReScript Adapter" "Deno Adapter"))
-     (ssg-count . 28))
-
-    (accessibility (count . 5) (status . "complete")
-     (components . ("BSL Metadata" "GSL Metadata" "ASL Metadata" "Makaton Schema" "a11y/schema.json")))
-
-    (testing (count . 4) (status . "complete")
-     (components . ("Bernoulli Verification" "Unit Tests" "E2E Tests" "CI/CD Pipeline")))
-
-    (documentation (count . 8) (status . "complete")
-     (components . ("README" "Note G Original" "Grammar Analysis" "HANDOVER"
-                    "POLY-SSG-TEMPLATE" "Module READMEs" "USER-GUIDE" "Language Spec")))
-
-    (configuration (count . 3) (status . "complete")
-     (components . ("Site Config Schema" "Example Config" "Environment Handling")))
-
-    (language-tooling (count . 6) (status . "complete")
-     (components . ("Lexer" "Parser" "Interpreter" "Compiler" "Syntax Highlighting" "LSP")))
-
-    (examples (count . 3) (status . "complete")
-     (components . ("Example Content" "Example Templates" "Example Config")))))
-
-;; ============================================================================
-;; Language Specification
-;; ============================================================================
-
-(define language-specification
-  '((name . "NoteG")
-    (version . "0.1.0")
-    (paradigm . "functional")
-    (typing . "static-inferred")
-
-    (features
-     ((variables . "let/const bindings")
-      (functions . "first-class lambdas")
-      (operators . "arithmetic, comparison, logical, pipe")
-      (templates . "{{ expr }} interpolation")
-      (pattern-matching . "match expressions")
-      (modules . "import/export")))
-
-    (syntax-highlights
-     ((keywords . ("let" "const" "fn" "if" "then" "else" "match" "with" "type" "module" "import" "export"))
-      (literals . ("strings" "numbers" "booleans" "null" "arrays" "records"))
-      (operators . ("+" "-" "*" "/" "%" "==" "!=" "<" "<=" ">" ">=" "&&" "||" "!" "|>" "->" "=>"))))))
+    (why-satellite
+     "Satellite pattern allows independent development while integrating with poly-ssg-mcp hub.")))
