@@ -1,7 +1,33 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # RSR-compliant .gitignore
+# Hyperpolymath Standard: Banned files will be rejected
 
+# ============================================================================
+# BANNED FILES (Hyperpolymath Language Policy)
+# These files MUST NOT exist in the repository
+# ============================================================================
+
+# TypeScript (BANNED - use ReScript instead)
+*.ts
+*.tsx
+*.d.ts
+
+# npm/Bun (BANNED - use Deno instead)
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lock
+bun.lockb
+
+# Makefile (BANNED - use just/must instead)
+Makefile
+makefile
+GNUmakefile
+
+# ============================================================================
 # OS & Editor
+# ============================================================================
 .DS_Store
 Thumbs.db
 *.swp
